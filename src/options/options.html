@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NJF Companion · Settings</title>
+    <link rel="stylesheet" href="../shared/ui.css" />
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand" id="brand"></div>
+        <nav class="nav" id="nav">
+          <a href="#environments">Environments</a>
+          <a href="#accounts">Accounts</a>
+          <a href="#session">Session</a>
+          <a href="#backup">Backup</a>
+          <a href="#privacy">Privacy</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page">
+      <div id="welcome"></div>
+
+      <section class="panel" id="environments">
+        <div class="panel-head">
+          <div>
+            <h2>Environments</h2>
+            <p>NJF deployments the extension may work on. Access is requested per environment.</p>
+          </div>
+          <button class="btn btn-primary" data-act="env-add"></button>
+        </div>
+        <div class="list" id="env-list"></div>
+      </section>
+
+      <section class="panel" id="accounts">
+        <div class="panel-head">
+          <div>
+            <h2>Accounts</h2>
+            <p>Saved sign-ins for auto sign-in and one-click switching. Passwords are encrypted on this device.</p>
+          </div>
+          <button class="btn btn-primary" data-act="acc-add"></button>
+        </div>
+        <div class="list" id="acc-list"></div>
+      </section>
+
+      <section class="panel" id="session">
+        <div class="panel-head">
+          <div>
+            <h2>Session</h2>
+            <p>How the extension keeps you signed in. Changes apply immediately to open tabs.</p>
+          </div>
+        </div>
+        <form class="settings" id="settings-form" autocomplete="off">
+          <label class="setting">
+            <div>
+              <div class="label">Auto-refresh token</div>
+              <div class="hint">Renews the access token before it expires, so the app's "session ending" dialog never appears.</div>
+            </div>
+            <span class="switch"><input type="checkbox" name="autoRefresh" /><span></span></span>
+          </label>
+          <label class="setting">
+            <div>
+              <div class="label">Refresh this early</div>
+              <div class="hint">Seconds before expiry. Capped at half the token lifetime. The app warns at 60 s.</div>
+            </div>
+            <div class="suffix"><input class="input num" type="number" name="refreshLeadSec" min="30" max="1800" step="5" /><span>sec</span></div>
+          </label>
+          <label class="setting">
+            <div>
+              <div class="label">Sign in again when refresh fails</div>
+              <div class="hint">When the single sign-on session ends, sign the same user in again if the account is saved.</div>
+            </div>
+            <span class="switch"><input type="checkbox" name="reloginOnRefreshFail" /><span></span></span>
+          </label>
+          <label class="setting">
+            <div>
+              <div class="label">Auto sign-in delay</div>
+              <div class="hint">Countdown shown on the login page before signing in, so you can cancel.</div>
+            </div>
+            <div class="suffix"><input class="input num" type="number" name="autoLoginDelaySec" min="0" max="30" step="1" /><span>sec</span></div>
+          </label>
+          <label class="setting">
+            <div>
+              <div class="label">Reload other tabs after switching account</div>
+              <div class="hint">NJF tabs on the same environment share one session; reloading keeps their menus in sync.</div>
+            </div>
+            <span class="switch"><input type="checkbox" name="reloadOtherTabs" /><span></span></span>
+          </label>
+          <label class="setting">
+            <div>
+              <div class="label">Error count on toolbar icon</div>
+              <div class="hint">Shows how many NJF API requests failed in the current tab. Details are in the popup's Error APIs tab.</div>
+            </div>
+            <span class="switch"><input type="checkbox" name="showBadge" /><span></span></span>
+          </label>
+        </form>
+      </section>
+
+      <section class="panel" id="backup">
+        <div class="panel-head">
+          <div>
+            <h2>Backup &amp; sharing</h2>
+            <p>Move your environments and accounts to another browser, or share a team setup.</p>
+          </div>
+        </div>
+        <div class="backup">
+          <div class="backup-row">
+            <div>
+              <div class="label">Export</div>
+              <label class="check"><input type="checkbox" id="export-passwords" /> Include passwords (stored as plain text in the file)</label>
+            </div>
+            <button class="btn" data-act="export"></button>
+          </div>
+          <div class="backup-row">
+            <div>
+              <div class="label">Import</div>
+              <div class="hint">Merges into your current setup. Matching environments and accounts are updated.</div>
+            </div>
+            <button class="btn" data-act="import"></button>
+            <input type="file" id="import-file" accept="application/json,.json" hidden />
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="privacy">
+        <div class="panel-head">
+          <div>
+            <h2>Privacy</h2>
+          </div>
+        </div>
+        <ul class="privacy">
+          <li>Everything stays in this browser. NJF Companion has no server, no analytics and no tracking.</li>
+          <li>Passwords are encrypted with AES-GCM using a key that cannot be exported and never leaves this device.</li>
+          <li>Network requests go only to the NJF environments you add, and only to their sign-in, token refresh, sign-out, menu and service health endpoints.</li>
+          <li>The extension runs only on environments you grant access to. You can revoke access at any time.</li>
+        </ul>
+        <div class="danger-zone">
+          <div>
+            <div class="label">Reset extension</div>
+            <div class="hint">Deletes all environments, accounts and settings from this browser.</div>
+          </div>
+          <button class="btn btn-danger" data-act="reset">Reset everything</button>
+        </div>
+      </section>
+
+      <footer class="foot" id="foot"></footer>
+    </main>
+
+    <dialog class="dialog" id="env-dialog">
+      <form method="dialog" id="env-form" autocomplete="off">
+        <div class="dialog-head"><h3 id="env-dialog-title">Add environment</h3></div>
+        <div class="dialog-body">
+          <label class="field"><span>Name</span><input class="input" name="name" placeholder="Dev" required maxlength="40" /></label>
+          <label class="field"><span>App URL</span><input class="input mono" name="origin" placeholder="http://192.168.1.200" required />
+            <small>The address you open in the browser. Only the origin is used.</small></label>
+          <label class="field"><span>API base URL</span><input class="input mono" name="apiBase" placeholder="/api/v1" />
+            <small>Relative to the app URL (default <span class="mono">/api/v1</span>), or absolute when the app talks to another host, e.g. a local dev server using the Dev API.</small></label>
+          <p class="form-error" id="env-error" role="alert"></p>
+        </div>
+        <div class="dialog-foot">
+          <button class="btn" value="cancel" formnovalidate>Cancel</button>
+          <button class="btn btn-primary" value="save" id="env-save">Save &amp; grant access</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="dialog" id="acc-dialog">
+      <form method="dialog" id="acc-form" autocomplete="off">
+        <div class="dialog-head"><h3 id="acc-dialog-title">Add account</h3></div>
+        <div class="dialog-body">
+          <label class="field"><span>Label</span><input class="input" name="label" placeholder="Maker" maxlength="40" />
+            <small>A short name you recognise, like the role. Defaults to the username.</small></label>
+          <label class="field"><span>Username</span><input class="input mono" name="username" placeholder="10000880" required autocomplete="off" /></label>
+          <label class="field"><span>Password</span>
+            <div class="pw"><input class="input" name="password" type="password" autocomplete="new-password" />
+              <button type="button" class="icon-btn" data-act="toggle-pw" aria-label="Show password"></button></div>
+            <small id="pw-hint">Encrypted before it is stored.</small></label>
+          <fieldset class="field envs">
+            <span>Available on</span>
+            <div id="acc-envs"></div>
+            <small>Leave all unchecked to use this account on every environment.</small>
+          </fieldset>
+          <p class="form-error" id="acc-error" role="alert"></p>
+        </div>
+        <div class="dialog-foot">
+          <button class="btn" value="cancel" formnovalidate>Cancel</button>
+          <button class="btn btn-primary" value="save">Save account</button>
+        </div>
+      </form>
+    </dialog>
+
+    <div class="snackbar" id="snackbar" role="status"></div>
+    <script type="module" src="options.js"></script>
+  </body>
+</html>

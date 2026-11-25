@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "NJF Companion",
+  "short_name": "NJF Companion",
+  "description": "Saved accounts, auto sign-in, token auto-refresh, session countdown and per-tab page history for the NJF web app.",
+  "version": "1.0.0",
+  "minimum_chrome_version": "120",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "NJF Companion",
+    "default_popup": "src/popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
+  "options_ui": {
+    "page": "src/options/options.html",
+    "open_in_tab": true
+  },
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+  "permissions": ["storage", "alarms", "scripting", "activeTab"],
+  "optional_host_permissions": ["http://*/*", "https://*/*"]
+}
